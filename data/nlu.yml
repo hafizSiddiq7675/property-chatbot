@@ -1,0 +1,66 @@
+version: "3.1"
+
+nlu:
+- intent: greet
+  examples: |
+    - hey
+    - hello
+    - hi
+    - good morning
+    - good evening
+
+- intent: provide_sales_price
+  examples: |
+    - the sales price is [250000](amount)
+    - it costs [300,000](amount)
+    - [150k](amount)
+    - the property is [1,200,000](amount) dollars
+    - [75000](amount)
+
+- intent: provide_down_payment
+  examples: |
+    - my down payment is [50000](amount)
+    - I have [20,000](amount) to put down
+    - [10k](amount) down
+    - putting down [100000](amount)
+    - [25000](amount)
+
+- intent: provide_interest_rate
+  examples: |
+    - the interest rate is [7.5%](rate)
+    - [6.8 percent](rate)
+    - rate is [8.25](rate)
+    - [9%](rate)
+    - [10.5](rate)%
+
+- intent: request_summary
+  examples: |
+    - show me the summary
+    - can I see the numbers?
+    - give me the breakdown
+    - summary please
+    - what does it all mean?
+
+- intent: reset_conversation
+  examples: |
+    - reset
+    - start over
+    - new calculation
+    - clear everything
+    - let's begin again
+
+- intent: affirm
+  examples: |
+    - yes
+    - indeed
+    - of course
+    - that's right
+    - correct
+
+- intent: deny
+  examples: |
+    - no
+    - never
+    - I don't think so
+    - don't do that
+    - wrong

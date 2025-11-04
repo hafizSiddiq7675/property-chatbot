@@ -1,0 +1,51 @@
+version: "3.1"
+
+intents:
+  - greet
+  - provide_sales_price
+  - provide_down_payment
+  - provide_interest_rate
+  - request_summary
+  - reset_conversation
+  - affirm
+  - deny
+
+entities:
+  - amount
+  - rate
+
+slots:
+  sales_price:
+    type: float
+    mappings:
+      - type: from_entity
+        entity: amount
+  down_payment:
+    type: float
+    mappings:
+      - type: from_entity
+        entity: amount
+  interest_rate:
+    type: float
+    mappings:
+      - type: from_entity
+        entity: rate
+
+responses:
+  utter_greet:
+    - text: "👋 Welcome! Let's validate your property investment. What's the sales price?"
+  utter_ask_down_payment:
+    - text: "Next, what's your down payment?"
+  utter_ask_interest_rate:
+    - text: "Now, what's the interest rate?"
+  utter_restart:
+    - text: "🔄 Starting fresh! What's the sales price?"
+  utter_goodbye:
+    - text: "Goodbye!"
+
+actions:
+  - action_validate_sales_price
+  - action_validate_down_payment
+  - action_validate_interest_rate
+  - action_show_summary
+  - action_reset

@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  rasa:
+    build: .
+    ports:
+      - "5005:5005"
+    volumes:
+      - ./models:/app/models
+    command: run -m models --enable-api --cors "*"  # Remove 'rasa'
+
+  action_server:
+    build: .
+    command: run actions  # Remove 'rasa'
+    ports:
+      - "5055:5055"
+    environment:
+      - BANK_RATE=6.5
