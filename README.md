@@ -61,5 +61,5 @@ BOT: 🟢 GREEN - Optimal Interest Rate - 7.5% is competitive.
      Would you like to adjust anything or start over?
 
 USER: Reset
-BOT: 🔄 Starting fresh! What's the sales price?
+BOT: 🔄 Starting fresh! and start with greeting "Hi".
 ```

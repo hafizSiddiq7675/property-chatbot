@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Investment Chatbot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 500px;
+            height: 600px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f5f5f5;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+
+        .message.bot .message-bubble {
+            background: #667eea;
+            color: white;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message.bot .message-bubble.status-green {
+            background: #4caf50;
+            color: white;
+        }
+
+        .message.bot .message-bubble.status-yellow {
+            background: #ffa726;
+            color: white;
+        }
+
+        .message.user .message-bubble {
+            background: #e0e0e0;
+            color: #333;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-input-container {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .chat-input:focus {
+            border-color: #667eea;
+        }
+
+        .send-button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        .send-button:hover {
+            transform: scale(1.05);
+        }
+
+        .send-button:active {
+            transform: scale(0.95);
+        }
+
+        .send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 10px 16px;
+            background: #667eea;
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            max-width: 70px;
+        }
+
+        .typing-indicator.show {
+            display: block;
+        }
+
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background: white;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 2px;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.7;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+
+        .status {
+            text-align: center;
+            padding: 8px;
+            font-size: 12px;
+            color: #666;
+            background: #fff3cd;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .status.connected {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            Property Investment Chatbot
+        </div>
+        <div class="status" id="status">Connecting to server...</div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                <div class="message-bubble">
+                    Welcome! I'm your Property Investment Assistant. Type "hello" to start validating your property investment.
+                </div>
+            </div>
+        </div>
+        <div class="chat-input-container">
+            <input
+                type="text"
+                class="chat-input"
+                id="userInput"
+                placeholder="Type your message..."
+                autocomplete="off"
+            >
+            <button class="send-button" id="sendButton">Send</button>
+        </div>
+    </div>
+    
+    <script>
+        const chatMessages = document.getElementById('chatMessages');
+        const userInput = document.getElementById('userInput');
+        const sendButton = document.getElementById('sendButton');
+        const statusDiv = document.getElementById('status');
+
+        // Configuration
+        const RASA_API_URL = 'http://localhost:5005/webhooks/rest/webhook';
+        const USER_ID = 'user_' + Math.random().toString(36).substr(2, 9);
+
+        // Check server connection
+        async function checkConnection() {
+            try {
+                const response = await fetch('http://localhost:5005/', {
+                    method: 'GET',
+                });
+                statusDiv.textContent = 'Connected';
+                statusDiv.className = 'status connected';
+            } catch (error) {
+                statusDiv.textContent = 'Server offline ';
+                statusDiv.className = 'status error';
+            }
+        }
+
+        // Add message to chat
+        function addMessage(text, isBot = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isBot ? 'bot' : 'user'}`;
+
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.className = 'message-bubble';
+
+            // Check for status indicators and add appropriate class
+            if (isBot) {
+                if (text.includes('🟢 GREEN')) {
+                    bubbleDiv.classList.add('status-green');
+                } else if (text.includes('🟡 YELLOW')) {
+                    bubbleDiv.classList.add('status-yellow');
+                }
+            }
+
+            bubbleDiv.textContent = text;
+
+            messageDiv.appendChild(bubbleDiv);
+            chatMessages.appendChild(messageDiv);
+
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Show typing indicator
+        function showTyping() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot';
+            typingDiv.id = 'typing-indicator';
+
+            const indicator = document.createElement('div');
+            indicator.className = 'typing-indicator show';
+            indicator.innerHTML = '<span></span><span></span><span></span>';
+
+            typingDiv.appendChild(indicator);
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Remove typing indicator
+        function hideTyping() {
+            const typing = document.getElementById('typing-indicator');
+            if (typing) {
+                typing.remove();
+            }
+        }
+
+        // Send message to Rasa
+        async function sendMessage() {
+            const message = userInput.value.trim();
+
+            if (!message) return;
+
+            // Add user message to chat
+            addMessage(message, false);
+
+            // Clear input
+            userInput.value = '';
+
+            // Disable send button
+            sendButton.disabled = true;
+
+            // Show typing indicator
+            showTyping();
+
+            try {
+                const response = await fetch(RASA_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        sender: USER_ID,
+                        message: message
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Server error');
+                }
+
+                const data = await response.json();
+
+                // Hide typing indicator
+                hideTyping();
+
+                // Add bot responses
+                if (data && data.length > 0) {
+                    data.forEach(botMessage => {
+                        setTimeout(() => {
+                            addMessage(botMessage.text, true);
+                        }, 300);
+                    });
+                } else {
+                    addMessage("I didn't understand that. Could you rephrase?", true);
+                }
+
+            } catch (error) {
+                hideTyping();
+                addMessage('Error: Could not connect to chatbot. Please ensure Docker containers are running.', true);
+                console.error('Error:', error);
+            } finally {
+                sendButton.disabled = false;
+                userInput.focus();
+            }
+        }
+
+        // Event listeners
+        sendButton.addEventListener('click', sendMessage);
+
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Check connection on load
+        checkConnection();
+
+        // Focus input on load
+        userInput.focus();
+    </script>
+</body>
+</html>

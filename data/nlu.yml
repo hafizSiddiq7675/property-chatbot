@@ -16,14 +16,24 @@ nlu:
     - [150k](amount)
     - the property is [1,200,000](amount) dollars
     - [75000](amount)
+    - [100000](amount)
+    - [200000](amount)
+    - [300000](amount)
+    - [500000](amount)
+    - [1000000](amount)
 
 - intent: provide_down_payment
   examples: |
     - my down payment is [50000](amount)
     - I have [20,000](amount) to put down
     - [10k](amount) down
+    - [15k](amount) down
+    - [20k](amount) down
     - putting down [100000](amount)
-    - [25000](amount)
+    - down payment [25000](amount)
+    - down [30000](amount)
+    - down [40000](amount)
+    - down [60000](amount)
 
 - intent: provide_interest_rate
   examples: |
@@ -48,6 +58,9 @@ nlu:
     - new calculation
     - clear everything
     - let's begin again
+    - restart
+    - start fresh
+    - begin again
 
 - intent: affirm
   examples: |

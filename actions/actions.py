@@ -2,6 +2,7 @@
 from typing import Any, Text, Dict, List
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
+from rasa_sdk.events import SlotSet, Restarted
 import os
 
 class ActionValidateSalesPrice(Action):
@@ -23,7 +24,10 @@ class ActionValidateSalesPrice(Action):
         else:
             dispatcher.utter_message(text=f"🟢 GREEN - Sales Price is acceptable (${sales_price:,.0f}).")
 
-        return [{"slot_name": "sales_price", "value": sales_price}]
+        # Ask for down payment
+        dispatcher.utter_message(text="Next, what's your down payment?")
+
+        return [SlotSet("sales_price", sales_price)]
 
 class ActionValidateDownPayment(Action):
     def name(self) -> Text:
@@ -39,12 +43,14 @@ class ActionValidateDownPayment(Action):
         if not down_payment:
             dispatcher.utter_message(text="I didn't understand the down payment. Please provide a number.")
             return []
-        
+
         if not sales_price:
             dispatcher.utter_message(text="I don't have the sales price yet. Please provide the sales price first.")
             return []
 
+        # Convert to float (in case they're strings)
         down_payment = float(down_payment)
+        sales_price = float(sales_price)
         down_payment_pct = (down_payment / sales_price) * 100
 
         if down_payment_pct < 10:
@@ -54,7 +60,10 @@ class ActionValidateDownPayment(Action):
         else:
             dispatcher.utter_message(text=f"🟢 GREEN - Optimal Down Payment - {down_payment_pct:.1f}% down. Excellent equity position!")
 
-        return [{"slot_name": "down_payment", "value": down_payment}]
+        # Ask for interest rate
+        dispatcher.utter_message(text="Now, what's the interest rate?")
+
+        return [SlotSet("down_payment", down_payment)]
 
 class ActionValidateInterestRate(Action):
     def name(self) -> Text:
@@ -79,7 +88,9 @@ class ActionValidateInterestRate(Action):
         else:
             dispatcher.utter_message(text=f"🟢 GREEN - Optimal Interest Rate - {interest_rate:.2f}% is competitive.")
 
-        return [{"slot_name": "interest_rate", "value": interest_rate}]
+        # Note: Summary will be triggered by the story flow
+
+        return [SlotSet("interest_rate", interest_rate)]
 
 class ActionShowSummary(Action):
     def name(self) -> Text:
@@ -96,6 +107,11 @@ class ActionShowSummary(Action):
         if not all([sales_price, down_payment, interest_rate]):
             dispatcher.utter_message(text="I'm missing some information. Please provide sales price, down payment, and interest rate.")
             return []
+
+        # Convert to float (in case they're strings)
+        sales_price = float(sales_price)
+        down_payment = float(down_payment)
+        interest_rate = float(interest_rate)
 
         loan_amount = sales_price - down_payment
         down_payment_pct = (down_payment / sales_price) * 100
@@ -115,7 +131,7 @@ class ActionShowSummary(Action):
             f"- Loan Amount: ${loan_amount:,.0f}\n"
             f"- Interest Rate: {interest_rate:.2f}%\n"
             f"- Monthly Payment: ~${monthly_payment:,.0f}\n\n"
-            f"Would you like to adjust anything or start over?"
+            f"Type 'reset' to start a new calculation or 'hi' to begin again."
         )
 
         dispatcher.utter_message(text=summary)
@@ -129,9 +145,14 @@ class ActionReset(Action):
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        
+
+        # Send the restart message
+        dispatcher.utter_message(text='🔄 Starting fresh! and start with greeting "Hi".')
+
+        # Reset all slots
         return [
-            {"slot_name": "sales_price", "value": None},
-            {"slot_name": "down_payment", "value": None},
-            {"slot_name": "interest_rate", "value": None}
+            SlotSet("sales_price", None),
+            SlotSet("down_payment", None),
+            SlotSet("interest_rate", None),
+            Restarted()
         ]

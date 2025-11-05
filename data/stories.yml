@@ -12,14 +12,12 @@ stories:
   - action: action_validate_sales_price
   - slot_was_set:
     - sales_price: 250000
-  - action: utter_ask_down_payment
   - intent: provide_down_payment
     entities:
     - amount: 50000
   - action: action_validate_down_payment
   - slot_was_set:
     - down_payment: 50000
-  - action: utter_ask_interest_rate
   - intent: provide_interest_rate
     entities:
     - rate: 7.5
@@ -28,14 +26,27 @@ stories:
     - interest_rate: 7.5
   - action: action_show_summary
 
-- story: reset conversation
+- story: reset after summary then restart
   steps:
+  - action: action_show_summary
+  - intent: reset_conversation
+  - action: action_reset
   - intent: greet
   - action: utter_greet
   - intent: provide_sales_price
     entities:
-    - amount: 100000
+    - amount: 250000
   - action: action_validate_sales_price
+  - slot_was_set:
+    - sales_price: 250000
+
+- story: provide sales price right after reset
+  steps:
   - intent: reset_conversation
   - action: action_reset
-  - action: utter_restart
+  - intent: provide_sales_price
+    entities:
+    - amount: 250000
+  - action: action_validate_sales_price
+  - slot_was_set:
+    - sales_price: 250000

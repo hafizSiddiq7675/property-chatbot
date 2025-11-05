@@ -16,3 +16,12 @@ services:
       - "5055:5055"
     environment:
       - BANK_RATE=6.5
+
+  web:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./index.html:/usr/share/nginx/html/index.html:ro
+    depends_on:
+      - rasa

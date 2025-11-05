@@ -17,19 +17,19 @@ entities:
 slots:
   sales_price:
     type: float
+    influence_conversation: false
     mappings:
-      - type: from_entity
-        entity: amount
+      - type: custom
   down_payment:
     type: float
+    influence_conversation: false
     mappings:
-      - type: from_entity
-        entity: amount
+      - type: custom
   interest_rate:
     type: float
+    influence_conversation: false
     mappings:
-      - type: from_entity
-        entity: rate
+      - type: custom
 
 responses:
   utter_greet:
@@ -39,9 +39,16 @@ responses:
   utter_ask_interest_rate:
     - text: "Now, what's the interest rate?"
   utter_restart:
-    - text: "🔄 Starting fresh! What's the sales price?"
+    - text: '🔄 Starting fresh! and start with greeting "Hi". '
   utter_goodbye:
-    - text: "Goodbye!"
+    - text: "Goodbye! Refresh the page to start a new calculation."
+
+forms:
+  property_form:
+    required_slots:
+      - sales_price
+      - down_payment
+      - interest_rate
 
 actions:
   - action_validate_sales_price
