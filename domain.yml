@@ -2,9 +2,15 @@ version: "3.1"
 
 intents:
   - greet
+  - provide_zip_code
+  - provide_state
   - provide_sales_price
   - provide_down_payment
   - provide_interest_rate
+  - provide_occupancy
+  - provide_loan_term
+  - provide_title_insurance
+  - provide_property_type
   - request_summary
   - reset_conversation
   - affirm
@@ -13,39 +19,136 @@ intents:
 entities:
   - amount
   - rate
+  - zip_code
+  - state
+  - occupancy_type
+  - term_years
+  - title_insurance
+  - property_type
 
 slots:
+  zip_code:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: zip_code
+        conditions:
+          - active_loop: property_form
+            requested_slot: zip_code
+  property_state:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: state
+        conditions:
+          - active_loop: property_form
+            requested_slot: property_state
   sales_price:
     type: float
+    influence_conversation: false
     mappings:
       - type: from_entity
         entity: amount
+        conditions:
+          - active_loop: property_form
+            requested_slot: sales_price
   down_payment:
     type: float
+    influence_conversation: false
     mappings:
       - type: from_entity
         entity: amount
+        conditions:
+          - active_loop: property_form
+            requested_slot: down_payment
   interest_rate:
     type: float
+    influence_conversation: false
     mappings:
       - type: from_entity
         entity: rate
+        conditions:
+          - active_loop: property_form
+            requested_slot: interest_rate
+  occupancy_type:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: occupancy_type
+        conditions:
+          - active_loop: property_form
+            requested_slot: occupancy_type
+  loan_term:
+    type: float
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: term_years
+        conditions:
+          - active_loop: property_form
+            requested_slot: loan_term
+  title_insurance:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: title_insurance
+        conditions:
+          - active_loop: property_form
+            requested_slot: title_insurance
+  property_type:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: property_type
+        conditions:
+          - active_loop: property_form
+            requested_slot: property_type
 
 responses:
   utter_greet:
-    - text: "👋 Welcome! Let's validate your property investment. What's the sales price?"
-  utter_ask_down_payment:
-    - text: "Next, what's your down payment?"
-  utter_ask_interest_rate:
-    - text: "Now, what's the interest rate?"
+    - text: "👋 Welcome! Let's do a quick property validation. What's the property zip code?"
+  utter_ask_property_form_zip_code:
+    - text: "What's the property zip code?"
+  utter_ask_property_form_property_state:
+    - text: "What state is the property in?"
+  utter_ask_property_form_sales_price:
+    - text: "What's the sales price?"
+  utter_ask_property_form_down_payment:
+    - text: "What's your down payment amount?"
+  utter_ask_property_form_interest_rate:
+    - text: "What's the interest rate?"
+  utter_ask_property_form_occupancy_type:
+    - text: "Is this owner-occupied or non-owner-occupied? (Type 'owner' or 'non-owner')"
+  utter_ask_property_form_loan_term:
+    - text: "What's the loan term in years?"
+  utter_ask_property_form_title_insurance:
+    - text: "Is there a Lender's Title Insurance Policy? (Type 'yes' or 'no')"
+  utter_ask_property_form_property_type:
+    - text: "What's the property type? Options:\n- sfh (Single Family Home)\n- condo\n- townhouse\n- multi-family (2-4 units)\n- mobile-home\n- raw-land"
   utter_restart:
-    - text: "🔄 Starting fresh! What's the sales price?"
+    - text: '🔄 Starting fresh! and start with greeting "Hi". '
   utter_goodbye:
-    - text: "Goodbye!"
+    - text: "Goodbye! Refresh the page to start a new calculation."
+
+forms:
+  property_form:
+    required_slots:
+      - zip_code
+      - property_state
+      - sales_price
+      - title_insurance
+      - property_type
+      - occupancy_type
+      - down_payment
+      - interest_rate
+      - loan_term
 
 actions:
-  - action_validate_sales_price
-  - action_validate_down_payment
-  - action_validate_interest_rate
+  - validate_property_form
   - action_show_summary
   - action_reset
