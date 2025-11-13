@@ -1,6 +1,14 @@
 version: "3.1"
 
 nlu:
+- regex: zipcode
+  examples: |
+    - \b\d{5}\b
+
+- regex: large_amount
+  examples: |
+    - \b\d{6,}\b
+
 - intent: greet
   examples: |
     - hey
@@ -9,18 +17,58 @@ nlu:
     - good morning
     - good evening
 
+- intent: provide_zip_code
+  examples: |
+    - [90210](zip_code)
+    - the zip code is [10001](zip_code)
+    - [75201](zip_code)
+    - [33101](zip_code)
+    - [94102](zip_code)
+    - zip is [60601](zip_code)
+    - property zip [77001](zip_code)
+    - [30301](zip_code)
+    - [85001](zip_code)
+    - [02101](zip_code)
+    - [12345](zip_code)
+    - [98765](zip_code)
+    - [55555](zip_code)
+
+- intent: provide_state
+  examples: |
+    - [California](state)
+    - [Texas](state)
+    - it's in [Florida](state)
+    - [New York](state)
+    - [CA](state)
+    - [TX](state)
+    - [FL](state)
+    - [NY](state)
+    - the state is [Illinois](state)
+    - property is in [Georgia](state)
+    - [Arizona](state)
+    - [Ohio](state)
+
 - intent: provide_sales_price
   examples: |
     - the sales price is [250000](amount)
     - it costs [300,000](amount)
-    - [150k](amount)
+    - [150000](amount)
     - the property is [1,200,000](amount) dollars
-    - [75000](amount)
     - [100000](amount)
     - [200000](amount)
     - [300000](amount)
     - [500000](amount)
     - [1000000](amount)
+    - price is [250000](amount)
+    - [450000](amount)
+    - [650000](amount)
+    - [125000](amount)
+    - [180000](amount)
+    - [350000](amount)
+    - [275000](amount)
+    - [600000](amount)
+    - [400000](amount)
+    - [750000](amount)
 
 - intent: provide_down_payment
   examples: |
@@ -42,6 +90,62 @@ nlu:
     - rate is [8.25](rate)
     - [9%](rate)
     - [10.5](rate)%
+
+- intent: provide_occupancy
+  examples: |
+    - [owner occupied](occupancy_type)
+    - [owner](occupancy_type)
+    - [non-owner occupied](occupancy_type)
+    - [non-owner](occupancy_type)
+    - [non owner](occupancy_type)
+    - [investment](occupancy_type)
+    - [primary residence](occupancy_type)
+    - [rental property](occupancy_type)
+    - [tenant occupied](occupancy_type)
+    - I live there
+    - it's my [primary residence](occupancy_type)
+    - it's an [investment property](occupancy_type)
+    - it's [owner occupied](occupancy_type)
+    - it's [non-owner occupied](occupancy_type)
+
+- intent: provide_loan_term
+  examples: |
+    - [30](term_years) years
+    - the term is [15](term_years) years
+    - [20](term_years)
+    - [25](term_years) year term
+    - [30](term_years)
+    - loan term [10](term_years) years
+    - [5](term_years)
+    - [40](term_years) years
+
+- intent: provide_title_insurance
+  examples: |
+    - [yes](title_insurance)
+    - [no](title_insurance)
+    - there is [title insurance](title_insurance)
+    - [yes](title_insurance), we have title insurance
+    - [no](title_insurance) title insurance
+    - we have [lender's title insurance](title_insurance)
+    - [yes](title_insurance) there is
+    - [no](title_insurance) there isn't
+
+- intent: provide_property_type
+  examples: |
+    - [sfh](property_type)
+    - [single family home](property_type)
+    - [condo](property_type)
+    - [townhouse](property_type)
+    - [multi-family](property_type)
+    - [mobile-home](property_type)
+    - [raw-land](property_type)
+    - it's a [condo](property_type)
+    - the property is a [single family home](property_type)
+    - [townhouse](property_type)
+    - [multi family](property_type)
+    - [mobile home](property_type)
+    - [land](property_type)
+    - [sfh](property_type)
 
 - intent: request_summary
   examples: |

@@ -2,28 +2,13 @@ version: "3.1"
 
 stories:
 
-- story: happy path
+- story: complete happy path with form
   steps:
   - intent: greet
   - action: utter_greet
-  - intent: provide_sales_price
-    entities:
-    - amount: 250000
-  - action: action_validate_sales_price
-  - slot_was_set:
-    - sales_price: 250000
-  - intent: provide_down_payment
-    entities:
-    - amount: 50000
-  - action: action_validate_down_payment
-  - slot_was_set:
-    - down_payment: 50000
-  - intent: provide_interest_rate
-    entities:
-    - rate: 7.5
-  - action: action_validate_interest_rate
-  - slot_was_set:
-    - interest_rate: 7.5
+  - action: property_form
+  - active_loop: property_form
+  - active_loop: null
   - action: action_show_summary
 
 - story: reset after summary then restart
@@ -33,20 +18,5 @@ stories:
   - action: action_reset
   - intent: greet
   - action: utter_greet
-  - intent: provide_sales_price
-    entities:
-    - amount: 250000
-  - action: action_validate_sales_price
-  - slot_was_set:
-    - sales_price: 250000
-
-- story: provide sales price right after reset
-  steps:
-  - intent: reset_conversation
-  - action: action_reset
-  - intent: provide_sales_price
-    entities:
-    - amount: 250000
-  - action: action_validate_sales_price
-  - slot_was_set:
-    - sales_price: 250000
+  - action: property_form
+  - active_loop: property_form

@@ -1,6 +1,23 @@
 version: "3.1"
 
 rules:
+  - rule: Activate form after greeting
+    steps:
+      - intent: greet
+      - action: utter_greet
+      - action: property_form
+      - active_loop: property_form
+
+  - rule: Submit form and show summary
+    condition:
+      - active_loop: property_form
+    steps:
+      - action: property_form
+      - active_loop: null
+      - slot_was_set:
+        - requested_slot: null
+      - action: action_show_summary
+
   - rule: Reset conversation anytime
     steps:
       - intent: reset_conversation

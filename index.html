@@ -98,6 +98,11 @@
             color: white;
         }
 
+        .message.bot .message-bubble.status-red {
+            background: #f44336;
+            color: white;
+        }
+
         .message.user .message-bubble {
             background: #e0e0e0;
             color: #333;
@@ -272,9 +277,30 @@
 
             // Check for status indicators and add appropriate class
             if (isBot) {
-                if (text.includes('🟢 GREEN')) {
+                // Green status indicators (positive/optimal messages)
+                if (text.includes('Sales Price is acceptable') ||
+                    text.includes('Optimal Down Payment') ||
+                    text.includes('Optimal Interest Rate') ||
+                    text.includes('Owner-Occupied property') ||
+                    text.includes('standard term') ||
+                    text.includes('Good protection') ||
+                    text.includes('Most marketable') ||
+                    text.includes('Good marketability')) {
                     bubbleDiv.classList.add('status-green');
-                } else if (text.includes('🟡 YELLOW')) {
+                }
+                // Yellow status indicators (warnings/concerns)
+                else if (text.includes('Minimum Property Value') ||
+                    text.includes('Minimum Down Payment') ||
+                    text.includes('Moderate Down Payment') ||
+                    text.includes('Minimum Interest Rate') ||
+                    text.includes('Usury Warning') ||
+                    text.includes('Non-Owner-Occupied property') ||
+                    text.includes('short term, higher payments') ||
+                    text.includes('longer than standard') ||
+                    text.includes('No Lender\'s Title Insurance') ||
+                    text.includes('Investment property') ||
+                    text.includes('Verify if permanently attached') ||
+                    text.includes('Higher risk - no improvements')) {
                     bubbleDiv.classList.add('status-yellow');
                 }
             }
